@@ -40,12 +40,6 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
 # e2e tests
 $ npm run test:e2e
 
