@@ -27,18 +27,20 @@ export class ProductService {
         const vendorId = await this.vendorService.upsertVendor(productData.data);
         const manufacturerId = await this.vendorService.upsertManufacturer(productData.data);
 
-        productData.vendorId = vendorId;
-        productData.manufacturerId = manufacturerId;
+        productData.data.vendorId = vendorId;
+        productData.data.manufacturerId = manufacturerId;
 
         const { _id, ...updateData } = productData;
         if (!productData.docId) {
-            productData.docId = nanoidv4
+            productData.data.docId = nanoidv4
         }
+
+        console.log(updateData);
 
         return this.productModel
             .findOneAndUpdate(
                 { productId: productData.productId },
-                productData,
+                updateData.data,
                 { upsert: true, new: true },
             )
             .exec();
@@ -55,16 +57,18 @@ export class ProductService {
             for (let index = 0; index < products.data.length; index++) {
                 const product = products.data[index];
                 const image = images[index] || '';
+
                 product.imageUrl = image;
                 // try {
 
 
-                const enhancedDescription = await this.gptService.enhanceDescription(
-                    product.name,
-                    product.description,
-                    product.category
-                );
-                product.description = enhancedDescription;
+                // const enhancedDescription = await this.gptService.enhanceDescription(
+                //     product.name,
+                //     product.description,
+                //     product.category
+                // );
+                // product.description = enhancedDescription;
+                product.data.description = 'testbabaishakan';
                 // } catch (innerError) {
                 //     console.log(`Error processing product ID ${product}:`, innerError);
                 // }
@@ -74,7 +78,7 @@ export class ProductService {
 
             console.log('Completed product import');
         } catch (error) {
-            console.error('Error in importProducts:', error);
+            // console.error('Error in importProducts:', error);
             throw error;
         }
     }
@@ -94,7 +98,7 @@ export class ProductService {
                 await product.save();
             }
         } catch (error) {
-            console.error('Error enhancing descriptions:', error);
+            // console.error('Error enhancing descriptions:', error);
         }
     }
 }
