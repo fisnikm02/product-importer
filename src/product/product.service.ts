@@ -10,38 +10,29 @@ import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ProductService {
-    private nanoid: any;
     constructor(
         @InjectModel(Product.name) private productModel: Model<ProductDocument>,
         private fileService: FileService,
         private vendorService: VendorService,
         private gptService: GPTService,
-    ) {
-        this.loadNanoid()
-    }
-
-    private async loadNanoid() {
-        try {
-            const { nanoid } = await import('nanoid');
-            this.nanoid = nanoid;
-        } catch (error) {
-            console.error('Error loading nanoid:', error);
-        }
-    }
+    ) { }
 
     async upsertProduct(productData: any): Promise<Product> {
+        let nanoidv4 = nanoid
+
         console.log('Upserting product with data:', productData);
         if (!productData.data.vendorId || !productData.data.manufacturerId) {
             throw new Error('Product data must include vendor and manufacturer information.');
         }
-        const vendorId = await this.vendorService.upsertVendor(productData.vendor);
-        const manufacturerId = await this.vendorService.upsertManufacturer(productData.manufacturer);
+        const vendorId = await this.vendorService.upsertVendor(productData.data);
+        const manufacturerId = await this.vendorService.upsertManufacturer(productData.data);
 
         productData.vendorId = vendorId;
         productData.manufacturerId = manufacturerId;
 
+        const { _id, ...updateData } = productData;
         if (!productData.docId) {
-            productData.docId = this.nanoid();
+            productData.docId = nanoidv4
         }
 
         return this.productModel
@@ -65,19 +56,20 @@ export class ProductService {
                 const product = products.data[index];
                 const image = images[index] || '';
                 product.imageUrl = image;
+                // try {
 
-                try {
-                    await this.upsertProduct(product);
 
-                    const enhancedDescription = await this.gptService.enhanceDescription(
-                        product.name,
-                        product.description,
-                        product.category
-                    );
-                    product.description = enhancedDescription;
-                } catch (innerError) {
-                    console.log(`Error processing product ID ${product.productId}:`, innerError);
-                }
+                const enhancedDescription = await this.gptService.enhanceDescription(
+                    product.name,
+                    product.description,
+                    product.category
+                );
+                product.description = enhancedDescription;
+                // } catch (innerError) {
+                //     console.log(`Error processing product ID ${product}:`, innerError);
+                // }
+
+                await this.upsertProduct(product);
             }
 
             console.log('Completed product import');

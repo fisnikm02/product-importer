@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class GPTService {
@@ -20,7 +22,7 @@ export class GPTService {
 
     async callGPT4(prompt: string): Promise<string> {
         try {
-            const apiKey = process.env.OPENAI_API_KEY;
+            const apiKey = process.env.APP_OPENAI_KEY;
             const response = await axios.post('https://api.openai.com/v1/completions', {
                 model: 'gpt-4',
                 prompt: prompt,

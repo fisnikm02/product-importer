@@ -1,4 +1,3 @@
-// manufacturer.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -11,12 +10,11 @@ export class ManufacturerService {
     ) { }
 
     async upsertManufacturer(manufacturerData: any): Promise<string> {
-        // Ensure that the upsert operation returns the document
         const manufacturer = await this.manufacturerModel.findOneAndUpdate(
-            { manufacturerId: manufacturerData.manufacturerId }, // Query to find existing or create new
-            manufacturerData, // Data to update or insert
-            { upsert: true, new: true } // Options: upsert creates if not found, new returns the updated document
-        ).exec(); // Execute the query
-        return manufacturer._id.toString(); // Return the unique identifier of the manufacturer
+            { manufacturerId: manufacturerData.manufacturerId },
+            manufacturerData,
+            { upsert: true, new: true }
+        ).exec();
+        return manufacturer._id.toString();
     }
 }
