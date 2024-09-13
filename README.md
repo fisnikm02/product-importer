@@ -12,6 +12,21 @@
 $ npm install
 ```
 
+## Environment Setup
+```bash
+# MongoDB credentials
+# Add your MongoDB connection details
+APP_MONGO_DB=<your_mongo_db_connection_string>
+
+# OpenAI API Key
+# Add your OpenAI API key
+APP_OPENAI_KEY=<your_openai_api_key>
+```
+
+```bash
+$ npm install
+```
+
 ## Compile and run the project
 
 ```bash
