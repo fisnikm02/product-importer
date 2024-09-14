@@ -22,7 +22,7 @@ export class GPTService {
 
     async callGPT4(prompt: string): Promise<string> {
         try {
-            const apiKey = process.env.APP_OPENAI_KEY;
+            const apiKey = process.env.APP_OPENAI_KEY_OMER;
             const response = await axios.post('https://api.openai.com/v1/completions', {
                 model: 'gpt-4',
                 prompt: prompt,

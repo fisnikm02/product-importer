@@ -20,7 +20,6 @@ export class ProductService {
     async upsertProduct(productData: any): Promise<Product> {
         let nanoidv4 = nanoid
 
-        console.log('Upserting product with data:', productData);
         if (!productData.data.vendorId || !productData.data.manufacturerId) {
             throw new Error('Product data must include vendor and manufacturer information.');
         }
@@ -30,12 +29,16 @@ export class ProductService {
         productData.data.vendorId = vendorId;
         productData.data.manufacturerId = manufacturerId;
 
-        const { _id, ...updateData } = productData;
-        if (!productData.docId) {
-            productData.data.docId = nanoidv4
+        if (!productData.productId) {
+            productData.productId = nanoidv4();  // Generate a new unique productId
         }
 
-        console.log(updateData);
+        const { _id, ...updateData } = productData;
+        if (!productData.docId) {
+            productData.data.docId = nanoidv4()
+        }
+
+        console.log(productData.productId, updateData.data.name);
 
         return this.productModel
             .findOneAndUpdate(
@@ -61,14 +64,12 @@ export class ProductService {
                 product.imageUrl = image;
                 // try {
 
-
-                // const enhancedDescription = await this.gptService.enhanceDescription(
-                //     product.name,
-                //     product.description,
-                //     product.category
-                // );
-                // product.description = enhancedDescription;
-                product.data.description = 'testbabaishakan';
+                const enhancedDescription = await this.gptService.enhanceDescription(
+                    product.data.name,
+                    product.data.description,
+                    product.data.category
+                );
+                product.data.description = enhancedDescription;
                 // } catch (innerError) {
                 //     console.log(`Error processing product ID ${product}:`, innerError);
                 // }
