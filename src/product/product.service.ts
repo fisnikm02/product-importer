@@ -87,7 +87,6 @@ export class ProductService {
     @Cron('0 0 * * *')
     async scheduledProductImport() {
         await this.importProducts();
-        await this.enhanceDescriptions();
     }
 
     async enhanceDescriptions() {

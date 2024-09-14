@@ -39,3 +39,11 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+
+## Routes
+
+```bash
+# To import products use route
+$ http://localhost:3000/products/import
+```
